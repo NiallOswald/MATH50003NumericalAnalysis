@@ -283,7 +283,7 @@ where $𝐟 = \begin{bmatrix} f(t_1) \\ ⋮ \\ f(t_n) \end{bmatrix}$.
 
 Here is a simple example for solving:
 $$
-u'(0) = 1, u' + t u = \E^t
+u'(0) = 1, u' + t u = {\rm e}^t
 $$
 which has an exact solution in terms of a special error function
 (which we determined using Mathematica).
@@ -337,9 +337,9 @@ $$
 D_h -  I_n^{\rm b}  A_n
 \end{bmatrix} 𝐮^{\rm b} = \underbrace{ \begin{bmatrix}
 1 \\
--a(t_1)-1/h & 1/h\\
+-1/h & 1/h -a(t_2)\\
 & \ddots & \ddots \\
-&& -a(t_{n-1})-1/h & 1/h
+&& -1/h & 1/h-a(t_n)
 \end{bmatrix}}_L 𝐮^{\rm b} = \begin{bmatrix} c \\ I_n^{\rm b} 𝐟 \end{bmatrix}
 $$
 Again this is a bidiagonal forward-substitution:
@@ -385,7 +385,7 @@ at each time-step:
 $$
 \begin{align*}
 𝐮_1 &= c \\
-𝐮_{k+1} &= (I- h A(t_{k+1})^{-1} (𝐮_k  + h 𝐟(t_{k+1}))
+𝐮_{k+1} &= (I- h A(t_{k+1}))^{-1} (𝐮_k  + h 𝐟(t_{k+1}))
 \end{align*}
 $$
 
@@ -448,11 +448,11 @@ which we turn into a vector
 $$
 𝐮(t) = \begin{bmatrix} u_1(t) \\ ⋮ \\ u_m(t) \end{bmatrix}
 $$
-We consider the case of a periodic forcing at the node $n = 1$.
+We consider the case of a periodic forcing at the middle node $n = ⌊m/2⌋$.
 
 Heat equation on this lattice is defined as follows:
 $$
-𝐮' = Δ𝐮 + 𝐞_1 \cos ωt
+𝐮' = Δ𝐮 + 𝐞_{⌊m/2⌋} \cos ωt
 $$
 We can employ forward and backward Euler:
 ```julia
@@ -460,7 +460,7 @@ n = 1_000 # number of time-steps
 t = range(0, 100; length=n)
 h = step(t)
 
-m = 50 # 100 nodes
+m = 50 # number of nodes
 
 
 Δ = SymTridiagonal([-1; fill(-2.0, m-2); -1], ones(m-1))
@@ -573,7 +573,7 @@ $$
 𝐞_1^⊤ \\
 D_h^2 \\
 𝐞_{n+1}^⊤
-\end{bmatrix} 𝐮 = \begin{bmatrix} c_0 \\ S 𝐟 \\ c_1 \end{bmatrix}
+\end{bmatrix} 𝐮 = \begin{bmatrix} c_0 \\ f(x_2) \\ ⋮ \\ f(x_{n-1}) \\ c_1 \end{bmatrix}
 $$
 
 Thus we solve:
